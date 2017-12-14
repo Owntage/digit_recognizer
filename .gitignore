@@ -1,2 +1,5 @@
-./build
-./.idea
+/build
+/.idea
+/cmake
+/lib
+/include
