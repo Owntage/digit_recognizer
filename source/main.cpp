@@ -91,6 +91,22 @@ struct Field
 			}
 		}
 	}
+
+	void reset()
+	{
+		for (int i = 0; i < IMAGE_WIDTH; i++)
+		{
+			for (int j = 0; j < IMAGE_WIDTH; j++)
+			{
+				pixels[i][j].setFillColor(sf::Color::White);
+			}
+		}
+	}
+
+	void paint(int i, int j)
+	{
+		pixels[i][j].setFillColor(sf::Color::Black);
+	}
 };
 
 int main()
@@ -107,6 +123,7 @@ int main()
 	window.setView(view);
 
 	Field field;
+	bool mousePressed = false;
 
 	while (window.isOpen())
 	{
@@ -115,9 +132,34 @@ int main()
 		while (window.pollEvent(event))
 		{
 			// Request for closing the window
-			if (event.type == sf::Event::Closed)
+			switch (event.type)
 			{
-				window.close();
+				case sf::Event::Closed:
+				{
+					window.close();
+					break;
+				}
+				case sf::Event::MouseButtonPressed:
+				{
+					mousePressed = true;
+					break;
+				}
+				case sf::Event::MouseButtonReleased:
+				{
+					mousePressed = false;
+					break;
+				}
+				case sf::Event::MouseMoved:
+				{
+					if (!mousePressed) break;
+					int x = event.mouseMove.x / TILE_SIZE;
+					int y = event.mouseMove.y / TILE_SIZE;
+					if (x >= 0 && y >= 0 && x < IMAGE_WIDTH && y < IMAGE_WIDTH)
+					{
+						field.paint(x, y);
+					}
+					break;
+				}
 			}
 		}
 		window.setActive();
