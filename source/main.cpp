@@ -1,9 +1,12 @@
 #include <vector>
 #include <iostream>
 #include "declarations.h"
+#include <SFML/Window.hpp>
 
 using namespace std;
 
+#define TILE_SIZE 10
+#define IMAGE_WIDTH 28
 
 void showVectorVals(string label, vector<double> &v)
 {
@@ -61,4 +64,23 @@ void trainXor() {
 int main()
 {
 	trainXor();
+
+	sf::Window window(sf::VideoMode(IMAGE_WIDTH * TILE_SIZE, IMAGE_WIDTH * TILE_SIZE), "input");
+	window.setFramerateLimit(60);
+	while (window.isOpen())
+	{
+		// Event processing
+		sf::Event event;
+		while (window.pollEvent(event))
+		{
+			// Request for closing the window
+			if (event.type == sf::Event::Closed)
+			{
+				window.close();
+			}
+		}
+		window.setActive();
+		window.display();
+	}
+
 }
