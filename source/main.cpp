@@ -2,8 +2,7 @@
 #include <iostream>
 #include "declarations.h"
 #include "pixel_field.h"
-#include <SFML/Window.hpp>
-#include <SFML/Graphics.hpp>
+#include "minist_loader.h"
 
 
 using namespace std;
@@ -78,6 +77,10 @@ int main()
 
 	Field field;
 	bool mousePressed = false;
+
+	cout << "extracting images" << endl;
+	auto images = extractImages("train-images.idx3-ubyte");
+	cout << "extraction finished" << endl;
 
 	while (window.isOpen())
 	{
