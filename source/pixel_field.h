@@ -55,6 +55,18 @@ struct Field
 	{
 		pixels[i][j].setFillColor(sf::Color::Black);
 	}
+
+	void paint(const vector<double>& imageVec) {
+		for (int i = 0; i < IMAGE_WIDTH; i++)
+		{
+			for (int j = 0; j < IMAGE_WIDTH; j++)
+			{
+				int intensity = (int) (imageVec[i + j * IMAGE_WIDTH] * 255.0);
+				intensity = 255 - intensity;
+				pixels[i][j].setFillColor(sf::Color(intensity, intensity, intensity));
+			}
+		}
+	}
 };
 
 #endif //NETWORK_SHOOTER_PROJECT_PIXEL_FIELD_H

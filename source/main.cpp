@@ -3,11 +3,11 @@
 #include "declarations.h"
 #include "pixel_field.h"
 #include "minist_loader.h"
-
+#include <random>
 
 using namespace std;
 
-
+typedef vector<double> vec_d;
 
 void showVectorVals(string label, vector<double> &v)
 {
@@ -62,7 +62,10 @@ void trainXor() {
 	cout << endl << "Done" << endl;
 }
 
-
+void trainDigits(Net& net, vector<vec_d>& images, vector<vec_d>& labels)
+{
+	
+}
 
 int main()
 {
@@ -78,12 +81,17 @@ int main()
 	Field field;
 	bool mousePressed = false;
 
-	cout << "extracting images" << endl;
+	cout << "extracting images & labels" << endl;
 	auto images = extractImages("train-images.idx3-ubyte");
+	auto labels = extractLabels("train-labels.idx1-ubyte");
 	cout << "extraction finished" << endl;
+	field.paint(images[0]);
+
+	int counter = 0;
 
 	while (window.isOpen())
 	{
+		counter++;
 		// Event processing
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -131,6 +139,14 @@ int main()
 				}
 			}
 		}
+
+		if (counter % 100 == 0)
+		{
+			int randIndex = rand() % images.size();
+			field.paint(images[randIndex]);
+			showVectorVals("label: ", labels[randIndex]);
+		}
+
 		window.setActive();
 		field.draw(window);
 		window.display();
