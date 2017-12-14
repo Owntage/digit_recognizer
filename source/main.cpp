@@ -160,6 +160,18 @@ int main()
 					}
 					break;
 				}
+				case sf::Event::KeyPressed:
+				{
+					switch (event.key.code)
+					{
+						case sf::Keyboard::Delete:
+						{
+							field.reset();
+							break;
+						}
+					}
+					break;
+				}
 			}
 		}
 		window.setActive();
