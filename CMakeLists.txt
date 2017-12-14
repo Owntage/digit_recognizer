@@ -4,7 +4,7 @@ project(network_shooter_project)
 set(MY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/source)
 set(MY_SOURCES ${MY_SOURCE_DIR}/neural-net.cpp)
 
-add_executable(perceptron ${MY_SOURCES} source/declarations.h source/net.cpp source/neuron.cpp)
+add_executable(perceptron ${MY_SOURCES} source/declarations.h source/net.cpp source/neuron.cpp source/training_data.cpp)
 
 add_definitions(-std=c++11 -g)
 
