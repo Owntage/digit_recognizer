@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8)
 project(network_shooter_project)
 
 set(MY_SOURCE_DIR ${PROJECT_SOURCE_DIR}/source)
-set(MY_SOURCES ${MY_SOURCE_DIR}/neural-net.cpp)
+set(MY_SOURCES ${MY_SOURCE_DIR}/main.cpp)
 
 add_executable(perceptron ${MY_SOURCES} source/declarations.h source/net.cpp source/neuron.cpp source/training_data.cpp)
 
