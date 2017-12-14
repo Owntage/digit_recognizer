@@ -15,8 +15,7 @@ void showVectorVals(string label, vector<double> &v)
 	cout << endl;
 }
 
-int main()
-{
+void trainXor() {
 	TrainingData trainData("trainingData.txt");
 	//e.g., {3, 2, 1 }
 	vector<unsigned> topology;
@@ -53,9 +52,13 @@ int main()
 
 		// Report how well the training is working, average over recnet
 		cout << "Net recent average error: "
-		     << myNet.getRecentAverageError() << endl;
+			 << myNet.getRecentAverageError() << endl;
 	}
 
 	cout << endl << "Done" << endl;
+}
 
+int main()
+{
+	trainXor();
 }
