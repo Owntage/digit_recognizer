@@ -23,7 +23,7 @@ void Net::backProp(const std::vector<double> &targetVals)
 	Layer &outputLayer = m_layers.back();
 	m_error = 0.0;
 
-	for(unsigned n = 0; n < outputLayer.size() - 1; ++n)
+	for(unsigned n = 0; n < outputLayer.size(); ++n)
 	{
 		double delta = targetVals[n] - outputLayer[n].getOutputVal();
 		m_error += delta *delta;
@@ -90,6 +90,7 @@ void Net::feedForward(const vector<double> &inputVals)
 }
 Net::Net(const vector<unsigned> &topology)
 {
+	int neuronCounter = 0;
 	unsigned numLayers = topology.size();
 	for(unsigned layerNum = 0; layerNum < numLayers; ++layerNum){
 		m_layers.push_back(Layer());
@@ -101,10 +102,12 @@ Net::Net(const vector<unsigned> &topology)
 		// add a bias neuron to the layer:
 		for(unsigned neuronNum = 0; neuronNum <= topology[layerNum]; ++neuronNum){
 			m_layers.back().push_back(Neuron(numOutputs, neuronNum));
-			cout << "Mad a Neuron!" << endl;
+			//cout << "Mad a Neuron!" << endl;
+			neuronCounter++;
 		}
 
 		// Force the bias node's output value to 1.0. It's the last neuron created above
 		m_layers.back().back().setOutputVal(1.0);
 	}
+	cout << "nuber of neurons: " << neuronCounter << endl;
 }

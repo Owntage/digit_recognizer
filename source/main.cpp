@@ -64,7 +64,32 @@ void trainXor() {
 
 void trainDigits(Net& net, vector<vec_d>& images, vector<vec_d>& labels)
 {
-	
+	vec_d results;
+
+	for (int i = 0; i < images.size(); i++) {
+		for (int j = 0; j < 10; j++)
+		{
+			net.feedForward(images[i]);
+			net.getResults(results);
+			net.backProp(labels[i]);
+			net.getRecentAverageError();
+		}
+	}
+}
+
+int getDigit(vec_d& vec)
+{
+	int res = 0;
+	double maxValue = vec[0];
+	for (int i = 1; i < vec.size(); i++)
+	{
+		if (vec[i] > maxValue)
+		{
+			maxValue = vec[i];
+			res = i;
+		}
+	}
+	return res;
 }
 
 int main()
@@ -87,11 +112,38 @@ int main()
 	cout << "extraction finished" << endl;
 	field.paint(images[0]);
 
-	int counter = 0;
+	cout << "train started" << endl;
+	Net myNet({784, 32, 16, 10});
+
+	for (int i = 0; i < 1; i++) {
+		trainDigits(myNet, images, labels);
+	}
+
+	cout << "train finished" << endl;
+
+
+	float counter = 0;
+	float correctCounter = 0;
+	for (int i = 0; i < images.size(); i++)
+	{
+		myNet.feedForward(images[i]);
+		vec_d result;
+		myNet.getResults(result);
+		int actualValue = getDigit(labels[i]);
+		int predictedValue = getDigit(result);
+		if (actualValue == 2)
+		{
+			if (actualValue == predictedValue) correctCounter++;
+			counter++;
+		}
+	}
+
+	cout << "accuracy: " << correctCounter / counter << endl;
+
 
 	while (window.isOpen())
 	{
-		counter++;
+
 		// Event processing
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -134,17 +186,38 @@ int main()
 							field.reset();
 							break;
 						}
+						case sf::Keyboard::Space:
+						{
+							vec_d image = field.getVector();
+							vec_d result;
+							myNet.feedForward(image);
+							myNet.getResults(result);
+							cout << "predicted value: " << getDigit(result) << endl;
+							showVectorVals("prediction result: ", result);
+							break;
+						}
+						case sf::Keyboard::D:
+						{
+							vec_d image = field.getVector();
+							vec_d results;
+							cout << "enter actual digit: " << endl;
+							int digit;
+							cin >> digit;
+							cout << endl;
+							vec_d label;
+							label.resize(10, -1.0f);
+							label[digit] = 1.0f;
+							myNet.feedForward(image);
+							myNet.getResults(results);
+							showVectorVals("results: ", results);
+							myNet.backProp(label);
+							myNet.getRecentAverageError();
+							break;
+						}
 					}
 					break;
 				}
 			}
-		}
-
-		if (counter % 100 == 0)
-		{
-			int randIndex = rand() % images.size();
-			field.paint(images[randIndex]);
-			showVectorVals("label: ", labels[randIndex]);
 		}
 
 		window.setActive();

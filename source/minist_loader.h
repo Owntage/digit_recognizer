@@ -45,7 +45,7 @@ vector<vector<double> > extractLabels(std::string filename)
 	for (int i = 0; i < SIZE; i++)
 	{
 		vector<double> label;
-		label.resize(10, 0.0);
+		label.resize(10, -1.0);
 		char digit;
 		input.read(&digit, 1);
 		label[digit] = 1.0;

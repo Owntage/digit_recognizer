@@ -67,6 +67,22 @@ struct Field
 			}
 		}
 	}
+
+	vector<double> getVector()
+	{
+		vector<double> result;
+		result.resize(IMAGE_WIDTH * IMAGE_WIDTH);
+		for (int i = 0; i < IMAGE_WIDTH; i++)
+		{
+			for (int j = 0; j < IMAGE_WIDTH; j++)
+			{
+				int intensity = pixels[i][j].getFillColor().b;
+				intensity = 255 - intensity;
+				result[i + j * IMAGE_WIDTH] = (((double) intensity) / 255.0);
+			}
+		}
+		return result;
+	}
 };
 
 #endif //NETWORK_SHOOTER_PROJECT_PIXEL_FIELD_H
