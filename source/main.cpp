@@ -67,30 +67,15 @@ void trainDigits(Net& net, vector<vec_d>& images, vector<vec_d>& labels)
 	vec_d results;
 
 	for (int i = 0; i < images.size(); i++) {
-		for (int j = 0; j < 10; j++)
+		for (int j = 0; j < 3; j++)
 		{
 			net.feedForward(images[i]);
 			net.getResults(results);
 			net.backProp(labels[i]);
-			net.getRecentAverageError();
 		}
 	}
 }
 
-int getDigit(vec_d& vec)
-{
-	int res = 0;
-	double maxValue = vec[0];
-	for (int i = 1; i < vec.size(); i++)
-	{
-		if (vec[i] > maxValue)
-		{
-			maxValue = vec[i];
-			res = i;
-		}
-	}
-	return res;
-}
 
 int main()
 {
@@ -113,11 +98,9 @@ int main()
 	field.paint(images[0]);
 
 	cout << "train started" << endl;
-	Net myNet({784, 32, 16, 10});
+	Net myNet({784, 100, 1});
 
-	for (int i = 0; i < 1; i++) {
-		trainDigits(myNet, images, labels);
-	}
+	trainDigits(myNet, images, labels);
 
 	cout << "train finished" << endl;
 
@@ -129,13 +112,13 @@ int main()
 		myNet.feedForward(images[i]);
 		vec_d result;
 		myNet.getResults(result);
-		int actualValue = getDigit(labels[i]);
-		int predictedValue = getDigit(result);
-		if (actualValue == 2)
+		double actualValue = labels[i][0];
+		double predictedValue = result[0];
+		if (actualValue > 0 == predictedValue > 0)
 		{
-			if (actualValue == predictedValue) correctCounter++;
-			counter++;
+			correctCounter++;
 		}
+		counter++;
 	}
 
 	cout << "accuracy: " << correctCounter / counter << endl;
@@ -192,8 +175,7 @@ int main()
 							vec_d result;
 							myNet.feedForward(image);
 							myNet.getResults(result);
-							cout << "predicted value: " << getDigit(result) << endl;
-							showVectorVals("prediction result: ", result);
+							cout << "predicted value: " << result[0] << endl;
 							break;
 						}
 						case sf::Keyboard::D:
