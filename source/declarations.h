@@ -63,7 +63,17 @@ private:
 	static double transferFunction(double x);
 	static double transferFunctionDerivative(double x);
 	// randomWeight: 0 - 1
-	static double randomWeight(void) { return rand() / double(RAND_MAX); }
+	static double randomWeight(void) {
+
+		int r = rand() % 10000;
+		double r_d = r;
+		r_d /= 10000.0;
+		r_d -= 0.5;
+		r_d *= 2;
+		return r_d;
+
+		//return 0.0;
+	}
 	double sumDOW(const Layer &nextLayer) const;
 	double m_outputVal;
 	vector<Connection> m_outputWeights;

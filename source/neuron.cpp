@@ -4,8 +4,8 @@
 
 #include "declarations.h"
 
-double Neuron::eta = 0.15; // overall net learning rate
-double Neuron::alpha = 0.5; // momentum, multiplier of last deltaWeight, [0.0..n]
+double Neuron::eta = 0.02; // overall net learning rate
+double Neuron::alpha = 0.0; // momentum, multiplier of last deltaWeight, [0.0..n]
 
 
 void Neuron::updateInputWeights(Layer &prevLayer)
@@ -57,14 +57,12 @@ void Neuron::calcOutputGradients(double targetVals)
 
 double Neuron::transferFunction(double x)
 {
-	// tanh - output range [-1.0..1.0]
 	return tanh(x);
 }
 
 double Neuron::transferFunctionDerivative(double x)
 {
-	// tanh derivative
-	return 1.0 - x * x;
+	return 1.0 - pow(tanh(x), 2.0);
 }
 
 void Neuron::feedForward(const Layer &prevLayer)

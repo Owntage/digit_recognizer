@@ -4,6 +4,7 @@
 #include <vector>
 #include <fstream>
 #include <string>
+#include <stdint.h>
 
 using namespace std;
 
@@ -24,8 +25,8 @@ vector<vector<double> > extractImages(std::string filename)
 		vector<double> image;
 		for (int j = 0; j < ROWS * COLUMNS; j++)
 		{
-			char pixel;
-			input.read(&pixel, 1);
+			unsigned char pixel;
+			input.read((char*)&pixel, 1);
 			image.push_back(((double) pixel) / 255.0);
 		}
 		result.push_back(image);
@@ -34,7 +35,7 @@ vector<vector<double> > extractImages(std::string filename)
 	return result;
 }
 
-vector<vector<double> > extractLabels(std::string filename)
+vector<vector<double> > extractLabels(std::string filename, char targetDigit)
 {
 	ifstream input;
 	input.open(filename, ios::in | ios::binary);
@@ -45,16 +46,10 @@ vector<vector<double> > extractLabels(std::string filename)
 	for (int i = 0; i < SIZE; i++)
 	{
 		vector<double> label;
-		char digit;
-		input.read(&digit, 1);
-		if (digit == 6)
-		{
-			label.push_back(1.0);
-		}
-		else
-		{
-			label.push_back(-1.0);
-		}
+		unsigned char digit;
+		label.resize(10, 0);
+		input.read((char*)&digit, 1);
+		label[digit] = 1.0;
 		result.push_back(label);
 	}
 

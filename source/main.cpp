@@ -12,62 +12,21 @@ typedef vector<double> vec_d;
 void showVectorVals(string label, vector<double> &v)
 {
 	cout << label << " ";
-	for(unsigned i = 0; i < v.size(); ++i)
+	for (unsigned i = 0; i < v.size(); ++i)
 	{
 		cout << v[i] << " ";
 	}
 	cout << endl;
 }
 
-void trainXor() {
-	TrainingData trainData("trainingData.txt");
-	//e.g., {3, 2, 1 }
-	vector<unsigned> topology;
-	//topology.push_back(3);
-	//topology.push_back(2);
-	//topology.push_back(1);
 
-	trainData.getTopology(topology);
-	Net myNet(topology);
-
-	vector<double> inputVals, targetVals, resultVals;
-	int trainingPass = 0;
-	while(!trainData.isEof())
-	{
-		++trainingPass;
-		cout << endl << "Pass" << trainingPass;
-
-		// Get new input data and feed it forward:
-		if(trainData.getNextInputs(inputVals) != topology[0])
-			break;
-		showVectorVals(": Inputs :", inputVals);
-		myNet.feedForward(inputVals);
-
-		// Collect the net's actual results:
-		myNet.getResults(resultVals);
-		showVectorVals("Outputs:", resultVals);
-
-		// Train the net what the outputs should have been:
-		trainData.getTargetOutputs(targetVals);
-		showVectorVals("Targets:", targetVals);
-		assert(targetVals.size() == topology.back());
-
-		myNet.backProp(targetVals);
-
-		// Report how well the training is working, average over recnet
-		cout << "Net recent average error: "
-			 << myNet.getRecentAverageError() << endl;
-	}
-
-	cout << endl << "Done" << endl;
-}
-
-void trainDigits(Net& net, vector<vec_d>& images, vector<vec_d>& labels)
+void trainDigits(Net &net, vector<vec_d> &images, vector<vec_d> &labels)
 {
 	vec_d results;
 
-	for (int i = 0; i < images.size(); i++) {
-		for (int j = 0; j < 3; j++)
+	for (int i = 0; i < images.size(); i++)
+	{
+		for (int j = 0; j < 1; j++)
 		{
 			net.feedForward(images[i]);
 			net.getResults(results);
@@ -76,6 +35,18 @@ void trainDigits(Net& net, vector<vec_d>& images, vector<vec_d>& labels)
 	}
 }
 
+int getDigit(vec_d vec)
+{
+	int result = 0;
+	for (int i = 1; i < 10; i++)
+	{
+		if (vec[i] > vec[result])
+		{
+			result = i;
+		}
+	}
+	return result;
+}
 
 int main()
 {
@@ -91,36 +62,52 @@ int main()
 	Field field;
 	bool mousePressed = false;
 
-	cout << "extracting images & labels" << endl;
+	cout << "extracting images" << endl;
 	auto images = extractImages("train-images.idx3-ubyte");
-	auto labels = extractLabels("train-labels.idx1-ubyte");
+
+
+	cout << "input example: " << endl;
+	showVectorVals("input", images[0]);
+
+
 	cout << "extraction finished" << endl;
-	field.paint(images[0]);
 
-	cout << "train started" << endl;
-	Net myNet({784, 100, 1});
-
-	trainDigits(myNet, images, labels);
-
-	cout << "train finished" << endl;
+	vector<Net *> myNets;
+	vector<double> accuracyVector;
 
 
+	myNets.push_back(new Net({784, 100, 16, 10}));
+	auto labels = extractLabels("train-labels.idx1-ubyte", 0);
+
+	cout << "input label: " << getDigit(labels[0]) << endl;
+
+
+	for (int i = 0; i < 3; i++)
+	{
+		cout << "epoch: " << i << endl;
+		trainDigits(*myNets.back(), images, labels);
+	}
+
+
+//validation
 	float counter = 0;
 	float correctCounter = 0;
 	for (int i = 0; i < images.size(); i++)
 	{
-		myNet.feedForward(images[i]);
+		myNets.back()->feedForward(images[i]);
 		vec_d result;
-		myNet.getResults(result);
-		double actualValue = labels[i][0];
-		double predictedValue = result[0];
-		if (actualValue > 0 == predictedValue > 0)
+		myNets.back()->getResults(result);
+		int actualValue = getDigit(labels[i]);
+		int predictedValue = getDigit(result);
+		if (actualValue == predictedValue)
 		{
 			correctCounter++;
 		}
 		counter++;
 	}
+	accuracyVector.push_back(correctCounter / counter);
 
+	cout << "train finished" << endl;
 	cout << "accuracy: " << correctCounter / counter << endl;
 
 
@@ -156,7 +143,13 @@ int main()
 					int y = event.mouseMove.y / TILE_SIZE;
 					if (x >= 0 && y >= 0 && x < IMAGE_WIDTH && y < IMAGE_WIDTH)
 					{
-						field.paint(x, y);
+						for (int i = 0; i < 2; i++)
+						{
+							for (int j = 0; j < 2; j++)
+							{
+								field.paint(x - 1 + i, y - 1 + j);
+							}
+						}
 					}
 					break;
 				}
@@ -172,10 +165,16 @@ int main()
 						case sf::Keyboard::Space:
 						{
 							vec_d image = field.getVector();
+							cout << "recognition: ";
+							myNets.back()->feedForward(image);
 							vec_d result;
-							myNet.feedForward(image);
-							myNet.getResults(result);
-							cout << "predicted value: " << result[0] << endl;
+							myNets.back()->getResults(result);
+							for (char digit = 0; digit < 10; digit++)
+							{
+								cout << result[digit] << " ";
+							}
+							cout << endl;
+							cout << "recognized digit: " << getDigit(result) << endl;
 							break;
 						}
 						case sf::Keyboard::D:
@@ -189,11 +188,11 @@ int main()
 							vec_d label;
 							label.resize(10, -1.0f);
 							label[digit] = 1.0f;
-							myNet.feedForward(image);
-							myNet.getResults(results);
+							//myNet.feedForward(image);
+							//myNet.getResults(results);
 							showVectorVals("results: ", results);
-							myNet.backProp(label);
-							myNet.getRecentAverageError();
+							//myNet.backProp(label);
+							//myNet.getRecentAverageError();
 							break;
 						}
 					}
