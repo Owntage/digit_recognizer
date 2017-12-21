@@ -76,7 +76,7 @@ int main()
 	vector<double> accuracyVector;
 
 
-	myNets.push_back(new Net({784, 100, 16, 10}));
+	myNets.push_back(new Net({784, 100, 32, 16, 10}));
 	auto labels = extractLabels("train-labels.idx1-ubyte", 0);
 
 	cout << "input label: " << getDigit(labels[0]) << endl;

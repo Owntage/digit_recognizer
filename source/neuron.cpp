@@ -4,8 +4,8 @@
 
 #include "declarations.h"
 
-double Neuron::eta = 0.02; // overall net learning rate
-double Neuron::alpha = 0.0; // momentum, multiplier of last deltaWeight, [0.0..n]
+double Neuron::eta = 0.03; // overall net learning rate
+double Neuron::alpha = 0.25; // momentum, multiplier of last deltaWeight, [0.0..n]
 
 
 void Neuron::updateInputWeights(Layer &prevLayer)
