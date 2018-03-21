@@ -15,25 +15,6 @@
 
 using namespace std;
 
-class TrainingData
-{
-public:
-	TrainingData(const string filename);
-	bool isEof(void)
-	{
-		return m_trainingDataFile.eof();
-	}
-	void getTopology(vector<unsigned> &topology);
-
-	// Returns the number of input values read from the file:
-	unsigned getNextInputs(vector<double> &inputVals);
-	unsigned getTargetOutputs(vector<double> &targetOutputVals);
-
-private:
-	ifstream m_trainingDataFile;
-};
-
-
 
 struct Connection
 {
@@ -51,19 +32,31 @@ class Neuron
 {
 public:
 	Neuron(unsigned numOutputs, unsigned myIndex);
-	void setOutputVal(double val) { m_outputVal = val; }
-	double getOutputVal(void) const { return m_outputVal; }
+
+	void setOutputVal(double val)
+	{ m_outputVal = val; }
+
+	double getOutputVal(void) const
+	{ return m_outputVal; }
+
 	void feedForward(const Layer &prevLayer);
+
 	void calcOutputGradients(double targetVals);
+
 	void calcHiddenGradients(const Layer &nextLayer);
+
 	void updateInputWeights(Layer &prevLayer);
+
 private:
 	static double eta; // [0.0...1.0] overall net training rate
 	static double alpha; // [0.0...n] multiplier of last weight change [momentum]
 	static double transferFunction(double x);
+
 	static double transferFunctionDerivative(double x);
+
 	// randomWeight: 0 - 1
-	static double randomWeight(void) {
+	static double randomWeight(void)
+	{
 
 		int r = rand() % 10000;
 		double r_d = r;
@@ -74,7 +67,9 @@ private:
 
 		//return 0.0;
 	}
+
 	double sumDOW(const Layer &nextLayer) const;
+
 	double m_outputVal;
 	vector<Connection> m_outputWeights;
 	unsigned m_myIndex;
@@ -87,10 +82,15 @@ class Net
 {
 public:
 	Net(const vector<unsigned> &topology);
+
 	void feedForward(const vector<double> &inputVals);
+
 	void backProp(const vector<double> &targetVals);
+
 	void getResults(vector<double> &resultVals) const;
-	double getRecentAverageError(void) const { return m_recentAverageError; }
+
+	double getRecentAverageError(void) const
+	{ return m_recentAverageError; }
 
 private:
 	vector<Layer> m_layers; //m_layers[layerNum][neuronNum]
@@ -98,10 +98,6 @@ private:
 	double m_recentAverageError;
 	static double m_recentAverageSmoothingFactor;
 };
-
-
-
-
 
 
 #endif //NETWORK_SHOOTER_PROJECT_DECLARATIONS_H

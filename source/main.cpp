@@ -3,7 +3,6 @@
 #include "declarations.h"
 #include "pixel_field.h"
 #include "minist_loader.h"
-#include <random>
 
 using namespace std;
 

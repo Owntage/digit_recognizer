@@ -17,7 +17,7 @@ vector<vector<double> > extractImages(std::string filename)
 	ifstream input;
 	input.open(filename, ios::in | ios::binary);
 	int unused[2];
-	input.read((char*) unused, sizeof(int) * 4);
+	input.read((char *) unused, sizeof(int) * 4);
 
 	vector<vector<double> > result;
 	for (int i = 0; i < SIZE; i++)
@@ -26,7 +26,7 @@ vector<vector<double> > extractImages(std::string filename)
 		for (int j = 0; j < ROWS * COLUMNS; j++)
 		{
 			unsigned char pixel;
-			input.read((char*)&pixel, 1);
+			input.read((char *) &pixel, 1);
 			image.push_back(((double) pixel) / 255.0);
 		}
 		result.push_back(image);
@@ -40,7 +40,7 @@ vector<vector<double> > extractLabels(std::string filename, char targetDigit)
 	ifstream input;
 	input.open(filename, ios::in | ios::binary);
 	int unused[2];
-	input.read((char*) unused, sizeof(int) * 2);
+	input.read((char *) unused, sizeof(int) * 2);
 
 	vector<vector<double> > result;
 	for (int i = 0; i < SIZE; i++)
@@ -48,7 +48,7 @@ vector<vector<double> > extractLabels(std::string filename, char targetDigit)
 		vector<double> label;
 		unsigned char digit;
 		label.resize(10, 0);
-		input.read((char*)&digit, 1);
+		input.read((char *) &digit, 1);
 		label[digit] = 1.0;
 		result.push_back(label);
 	}
